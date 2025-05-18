@@ -1091,6 +1091,13 @@
   resolved "https://registry.yarnpkg.com/@polka/url/-/url-1.0.0-next.29.tgz#5a40109a1ab5f84d6fd8fc928b19f367cbe7e7b1"
   integrity sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==
 
+"@primeuix/forms@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@primeuix/forms/-/forms-0.0.4.tgz#8fbcc9a1f1204132f868c19fd82b9a23d3a8197f"
+  integrity sha512-WKrxZPM9fPAEsM0xcTrOOJn86MbfOEzPwSwpO94Y7RtguWw+1nrvqYNzCcmVqO6zBi0BVMihoWxMKFIRzTOuZg==
+  dependencies:
+    "@primeuix/utils" "^0.4.0"
+
 "@primeuix/styled@^0.6.1":
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/@primeuix/styled/-/styled-0.6.1.tgz#c1f48f142873f4ea6d664f66e8cf81bfd66d90ce"
@@ -1112,6 +1119,11 @@
   dependencies:
     "@primeuix/styled" "^0.6.1"
 
+"@primeuix/utils@^0.4.0":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@primeuix/utils/-/utils-0.4.1.tgz#cb3f437ff67e7b0d3f21c304389c4be6c4214077"
+  integrity sha512-5+1NLfyna+gLRPeFTo+xlR0tfPVLuVdidbeahAMLkQga5Rw0LxyUBCyD2/Zv2JkV69o2T+hpEDyddl3VdnYoBw==
+
 "@primeuix/utils@^0.5.3":
   version "0.5.3"
   resolved "https://registry.yarnpkg.com/@primeuix/utils/-/utils-0.5.3.tgz#3a6f597f88e6e9ff8993e81a25c2dfcdd787fd71"
@@ -1124,6 +1136,15 @@
   dependencies:
     "@primeuix/styled" "^0.6.1"
     "@primeuix/utils" "^0.5.3"
+
+"@primevue/forms@^4.3.4":
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/@primevue/forms/-/forms-4.3.4.tgz#a7295e392859a3f1b562036c2e6d0d7d172146e9"
+  integrity sha512-calQ85ibrF2K4BDGp3ujyMs3KhQ9KBrmph1AkKS4fn9iVPX6xkRHsgqSLZjQJ4Bk8eXsWyU+wQr8RL6hHdkeww==
+  dependencies:
+    "@primeuix/forms" "^0.0.4"
+    "@primeuix/utils" "^0.5.3"
+    "@primevue/core" "4.3.4"
 
 "@primevue/icons@4.3.4":
   version "4.3.4"
@@ -7974,3 +7995,8 @@ yorkie@^2.0.0:
     is-ci "^1.0.10"
     normalize-path "^1.0.0"
     strip-indent "^2.0.0"
+
+zod@^3.24.4:
+  version "3.24.4"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.24.4.tgz#e2e2cca5faaa012d76e527d0d36622e0a90c315f"
+  integrity sha512-OdqJE9UDRPwWsrHjLN2F8bPxvwJBK22EHLWtanu0LSYr5YqzsaaW3RMgmjwr8Rypg5k+meEJdSPXJZXE/yqOMg==

@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <Menubar v-if="user.isAuthenticated" :model="items">
     <template #item="{ item }">
       <router-link v-if="item" :to="item.path">{{ item.name }}</router-link>
@@ -8,6 +9,7 @@
 </template>
 
 <script setup lang="ts">
+import { Toast } from 'primevue';
 import Menubar from 'primevue/menubar';
 import { ref } from 'vue';
 import useUserStore from '@/stores/userStore';
