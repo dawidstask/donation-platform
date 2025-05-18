@@ -4,7 +4,7 @@ import HomeView from '@/views/HomeView.vue';
 import CampaignsView from '@/views/CampaignsView.vue';
 import AdminView from '@/views/AdminView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
-import useUserStore from '@/stores/userStore';
+import { useUserStore } from '@/stores/useUserStore';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -49,16 +49,16 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const user = useUserStore();
+  const userStore = useUserStore();
 
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    if (!user.isAuthenticated) {
+    if (!userStore.isAuthenticated) {
       next({ name: 'Login' });
     } else {
       next();
     }
   } else if (to.matched.some((record) => record.meta.requiresAdmin)) {
-    if (!user.isAdmin) {
+    if (!userStore.isAdmin) {
       next({ name: 'Home' });
     } else {
       next();

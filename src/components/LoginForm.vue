@@ -9,8 +9,13 @@ import { ref } from 'vue';
 import { zodResolver } from '@primevue/forms/resolvers/zod';
 import { useToast } from 'primevue/usetoast';
 import { z } from 'zod';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/useUserStore';
 
 const toast = useToast();
+const router = useRouter();
+const userStore = useUserStore();
+
 const initialValues = ref({
   username: '',
   password: '',
@@ -23,10 +28,28 @@ const resolver = ref(zodResolver(
   }),
 ));
 
-const onFormSubmit = ({ valid }) => {
-  // TODO: validate
+const onFormSubmit = ({ valid, values }) => {
   if (valid) {
-    toast.add({ severity: 'success', summary: 'Successfully logged in.', life: 3000 });
+    const result = userStore.login({
+      username: values.username,
+      password: values.password,
+    });
+
+    if (result.success) {
+      toast.add({
+        severity: 'success',
+        summary: 'Successfully logged in.',
+        life: 2000,
+      });
+      router.push('/');
+    } else {
+      toast.add({
+        severity: 'error',
+        summary: 'Login failed',
+        detail: result.message,
+        life: 2000,
+      });
+    }
   }
 };
 </script>
@@ -38,6 +61,13 @@ const onFormSubmit = ({ valid }) => {
         <span class="login-form__title">
           Login
         </span>
+        <div class="login-form__hint">
+          <p>For demo purposes, you can use:</p>
+          <ul>
+            <li>Username: user, Password: 1234</li>
+            <li>Username: admin, Password: 5678</li>
+          </ul>
+        </div>
       </template>
       <template #content>
         <Form
@@ -96,7 +126,7 @@ const onFormSubmit = ({ valid }) => {
     width: 100%;
     max-width: 500px;
     height: 100%;
-    max-height: 400px;
+    max-height: 500px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -114,9 +144,18 @@ const onFormSubmit = ({ valid }) => {
     margin-bottom: 10px;
   }
 
-  .p-card-body {
-    gap: 50px
+  &__hint {
+    margin: 16px 0;
+    font-size: 0.85rem;
+    color: #666;
+    p {
+      margin-bottom: 4px;
+    }
+    ul {
+      padding-left: 16px;
+    }
   }
+
   .p-password-input {
     width: 100%;
   }
