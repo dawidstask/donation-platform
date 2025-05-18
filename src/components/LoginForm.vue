@@ -15,6 +15,7 @@ import { useUserStore } from '@/stores/useUserStore';
 const toast = useToast();
 const router = useRouter();
 const userStore = useUserStore();
+userStore.logout();
 
 const initialValues = ref({
   username: '',
@@ -36,11 +37,6 @@ const onFormSubmit = ({ valid, values }) => {
     });
 
     if (result.success) {
-      toast.add({
-        severity: 'success',
-        summary: 'Successfully logged in.',
-        life: 2000,
-      });
       router.push('/');
     } else {
       toast.add({
