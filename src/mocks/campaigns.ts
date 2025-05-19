@@ -4,7 +4,7 @@ export interface Campaign {
   description: string;
   category: string;
   image: string;
-  price: number;
+  amount: number;
 }
 
 export const campaigns: Campaign[] = [
@@ -14,7 +14,7 @@ export const campaigns: Campaign[] = [
     description: 'Help bring clean water to villages.',
     category: 'Water',
     image: 'https://plus.unsplash.com/premium_photo-1678837556048-8809e355241b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=300',
-    price: 1000,
+    amount: 1000,
   },
   {
     id: 2,
@@ -22,7 +22,7 @@ export const campaigns: Campaign[] = [
     description: 'Support reforestation efforts worldwide.',
     category: 'Environment',
     image: 'https://plus.unsplash.com/premium_photo-1681140560806-928e8b9a9a20?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=300',
-    price: 50,
+    amount: 50,
   },
   {
     id: 3,
@@ -30,7 +30,7 @@ export const campaigns: Campaign[] = [
     description: 'Support education programs for underprivileged children.',
     category: 'Education',
     image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=2022&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=300',
-    price: 250,
+    amount: 250,
   },
   {
     id: 4,
@@ -38,7 +38,7 @@ export const campaigns: Campaign[] = [
     description: 'Provide meals for families in need.',
     category: 'Food',
     image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=300',
-    price: 100,
+    amount: 100,
   },
   {
     id: 5,
@@ -46,7 +46,7 @@ export const campaigns: Campaign[] = [
     description: 'Support medical services in underserved communities.',
     category: 'Health',
     image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=300',
-    price: 500,
+    amount: 500,
   },
   {
     id: 6,
@@ -54,6 +54,6 @@ export const campaigns: Campaign[] = [
     description: 'Provide emergency aid to disaster-affected areas.',
     category: 'Emergency',
     image: 'https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=300',
-    price: 750,
+    amount: 750,
   },
 ];

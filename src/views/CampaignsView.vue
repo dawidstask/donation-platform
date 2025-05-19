@@ -2,9 +2,45 @@
 import DataView from 'primevue/dataview';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
+import InputNumber from 'primevue/inputnumber';
+import { ref } from 'vue';
 import { useCampaignStore } from '@/stores/useCampaignStore';
+import { useToast } from 'primevue/usetoast';
+import type { Campaign } from '@/mocks/campaigns';
 
 const campaignStore = useCampaignStore();
+const toast = useToast();
+const donations = ref<Map<number, number | null>>(
+  new Map(),
+);
+
+const getDonation = (campaignId: number) => donations.value.get(campaignId) ?? null;
+const setDonation = (campaignId: number, value: number | null) => donations.value
+  .set(campaignId, value);
+
+const donate = (campaign: Campaign, amount: number | null) => {
+  if (!amount || amount <= 0) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Please enter a valid donation amount',
+      life: 3000,
+    });
+    return;
+  }
+
+  campaignStore.updateCampaign(campaign.id, {
+    amount: campaign.amount + amount,
+  });
+
+  toast.add({
+    severity: 'success',
+    summary: 'Success',
+    detail: `Thank you for your donation of $${amount}!`,
+    life: 3000,
+  });
+  setDonation(campaign.id, null);
+};
 </script>
 
 <template>
@@ -20,9 +56,6 @@ const campaignStore = useCampaignStore();
               <div class="campaigns__item">
                 <div class="campaigns__image">
                   <img :src="item.image" :alt="item.name" />
-                  <div class="campaigns__tag">
-                    <!-- <Tag :value="item.inventoryStatus" :severity="getSeverity(item)"></Tag>-->
-                  </div>
                 </div>
                 <div class="campaigns__content">
                   <div class="campaigns__details">
@@ -34,12 +67,26 @@ const campaignStore = useCampaignStore();
                     </div>
                   </div>
                   <div class="campaigns__actions">
-                    <span class="campaigns__price">${{ item.price }}</span>
+                    <span class="campaigns__amount">${{ item.amount }}</span>
                     <div class="campaigns__buttons">
+                      <div class="campaigns__input">
+                        <InputNumber
+                          :modelValue="getDonation(item.id)"
+                          @update:modelValue="(value) => setDonation(item.id, value)"
+                          inputId="minmax-buttons"
+                          showButtons
+                          :min="0"
+                          :max="10000"
+                          mode="currency"
+                          currency="USD"
+                          locale="en-US"
+                        />
+                      </div>
                       <Button
                         icon="pi pi-shopping-cart"
                         label="Donate"
                         class="campaigns__buy-button"
+                        @click="donate(item, getDonation(item.id))"
                       />
                     </div>
                   </div>
@@ -65,9 +112,9 @@ const campaignStore = useCampaignStore();
 
   &__item {
     display: flex;
-    height: 120px;
     flex-direction: column;
     @media (min-width: 961px) {
+      height: 120px;
       flex-direction: row;
     }
   }
@@ -84,23 +131,16 @@ const campaignStore = useCampaignStore();
     }
   }
 
-  &__tag {
-    position: absolute;
-    left: 4px;
-    top: 4px;
-    background-color: rgba(0, 0, 0, 0.7);
-    border-radius: 4px;
-  }
-
   &__content {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     flex: 1;
     gap: 1.5rem;
-    padding-left: 1rem;
+    padding: 1rem;
 
     @media (min-width: 768px) {
+      padding: 0 0 0 1rem;
       flex-direction: row;
       align-items: start;
     }
@@ -140,19 +180,28 @@ const campaignStore = useCampaignStore();
     }
   }
 
-  &__price {
+  &__amount {
     font-size: 1.25rem;
     font-weight: 600;
   }
 
   &__buttons {
-    display: flex;
-    flex-direction: row-reverse;
-    gap: 0.5rem;
+    display: grid;
+    gap: 1rem;
+
+    @media (min-width: 500px) {
+      grid-template-columns: 1fr 1fr;
+    }
 
     @media (min-width: 768px) {
+      display: flex;
       flex-direction: row;
+      gap: 0.5rem;
     }
+  }
+
+  &__input .p-inputnumber{
+    width: 100%;
   }
 
   &__buy-button {
