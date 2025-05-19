@@ -3,7 +3,8 @@ import DataView from 'primevue/dataview';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import InputNumber from 'primevue/inputnumber';
-import { ref } from 'vue';
+import InputText from 'primevue/inputtext';
+import { ref, computed, watch } from 'vue';
 import { useCampaignStore } from '@/stores/useCampaignStore';
 import { useToast } from 'primevue/usetoast';
 import type { Campaign } from '@/mocks/campaigns';
@@ -13,6 +14,26 @@ const toast = useToast();
 const donations = ref<Map<number, number | null>>(
   new Map(),
 );
+const search = ref<string>('');
+const debouncedSearch = ref<string>('');
+
+watch(search, (newValue) => {
+  const timeoutId = setTimeout(() => {
+    debouncedSearch.value = newValue;
+  }, 500);
+
+  return () => clearTimeout(timeoutId);
+});
+
+const matchesSearch = (campaign: Campaign, searchTerm: string): boolean => {
+  const searchLower = searchTerm.toLowerCase();
+  return campaign.title.toLowerCase().includes(searchLower)
+    || campaign.description.toLowerCase().includes(searchLower)
+    || campaign.category.toLowerCase().includes(searchLower);
+};
+
+const filteredCampaigns = computed(() => campaignStore.campaigns
+  .filter((campaign) => matchesSearch(campaign, debouncedSearch.value)));
 
 const getDonation = (campaignId: number) => donations.value.get(campaignId) ?? null;
 const setDonation = (campaignId: number, value: number | null) => donations.value
@@ -46,10 +67,13 @@ const donate = (campaign: Campaign, amount: number | null) => {
 <template>
   <Card>
     <template #title>
-      Campaigns
+      <div class="header">
+        <span class="header__title">Campaigns</span>
+        <InputText v-model="search" placeholder="Search campaigns..." />
+      </div>
     </template>
     <template #content>
-      <DataView :value="campaignStore.campaigns" paginator :rows="5">
+      <DataView :value="filteredCampaigns" paginator :rows="5">
         <template #list="slotProps">
           <div class="campaigns-wrapper">
             <div v-for="(item, index) in slotProps.items" :key="index" class="campaigns">
@@ -64,6 +88,7 @@ const donate = (campaign: Campaign, amount: number | null) => {
                         {{ item.category }}
                       </span>
                       <div class="campaigns__title">{{ item.title }}</div>
+                      <div class="campaigns__description">{{ item.description }}</div>
                     </div>
                   </div>
                   <div class="campaigns__actions">
@@ -101,6 +126,22 @@ const donate = (campaign: Campaign, amount: number | null) => {
 </template>
 
 <style scoped lang="scss">
+.header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  @media (min-width: 500px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &__title {
+    margin-bottom: 0.5rem;
+    @media (min-width: 500px) {
+      margin-bottom: unset;
+    }
+  }
+}
 .campaigns-wrapper {
   display: flex;
   flex-direction: column;
