@@ -25,11 +25,11 @@ watch(search, (newValue) => {
   return () => clearTimeout(timeoutId);
 });
 
-const matchesSearch = (campaign: Campaign, searchTerm: string): boolean => {
+const matchesSearch = (campaign: Campaign, searchTerm: string) => {
   const searchLower = searchTerm.toLowerCase();
   return campaign.title.toLowerCase().includes(searchLower)
     || campaign.description.toLowerCase().includes(searchLower)
-    || campaign.category.toLowerCase().includes(searchLower);
+    || campaignStore.getCategoryById(campaign.category)?.toLowerCase().includes(searchLower);
 };
 
 const filteredCampaigns = computed(() => campaignStore.campaigns
@@ -64,7 +64,7 @@ const filteredCampaigns = computed(() => campaignStore.campaigns
                   <div class="campaigns__details">
                     <div>
                       <span class="campaigns__category">
-                        {{ item.category }}
+                        {{ campaignStore.getCategoryById(item.category) }}
                       </span>
                       <div class="campaigns__title">{{ item.title }}</div>
                       <div class="campaigns__description">{{ item.description }}</div>

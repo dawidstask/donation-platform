@@ -1,9 +1,11 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { Campaign, campaigns as initialCampaigns } from '@/mocks/campaigns';
+import { CampaignCategory, categories as initialCategories } from '@/mocks/categories';
 
 export const useCampaignStore = defineStore('campaign', () => {
   const campaigns = ref([...initialCampaigns]);
+  const categories = ref<CampaignCategory[]>([...initialCategories]);
 
   const getCampaignById = (id: number) => campaigns.value
     .find((campaign): boolean => campaign.id === id);
@@ -21,6 +23,9 @@ export const useCampaignStore = defineStore('campaign', () => {
     }
   };
 
+  const getCategoryById = (id: string) => categories.value
+    .find((category: CampaignCategory): boolean => category.id === id)?.label;
+
   const deleteCampaign = (id: number) => {
     campaigns.value = campaigns.value.filter((campaign): boolean => campaign.id !== id);
   };
@@ -31,6 +36,8 @@ export const useCampaignStore = defineStore('campaign', () => {
     addCampaign,
     updateCampaign,
     deleteCampaign,
+    getCategoryById,
     campaigns,
+    categories,
   };
 });

@@ -14,15 +14,6 @@ import { useCampaignStore } from '@/stores/useCampaignStore';
 const campaignStore = useCampaignStore();
 const toast = useToast();
 
-const categories = [
-  'Water',
-  'Environment',
-  'Education',
-  'Food',
-  'Health',
-  'Emergency',
-];
-
 const schema = toTypedSchema(z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
@@ -135,7 +126,9 @@ const onSubmit = handleSubmit(async (values) => {
         id="category"
         v-model="category"
         v-bind="categoryAttrs"
-        :options="categories"
+        :options="campaignStore.categories"
+        optionLabel="label"
+        optionValue="id"
         :class="{ 'p-invalid': errors.category }"
         class="campaign-form__input"
         placeholder="Select a category"
