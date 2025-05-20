@@ -10,13 +10,16 @@ import { useCampaignStore } from '@/stores/useCampaignStore';
 import type { Campaign } from '@/mocks/campaigns';
 import { useCampaign } from '@/composables/useCampaign';
 import CampaignAction from '@/components/CampaignAction.vue';
+import { useToast } from 'primevue/usetoast';
 
 const campaignStore = useCampaignStore();
 const { donate, getDonation, setDonation } = useCampaign();
+const toast = useToast();
 
 const search = ref<string>('');
 const debouncedSearch = ref<string>('');
 const isDialogVisible = ref(false);
+const selectedCampaign = ref<Campaign | null>(null);
 
 watch(search, (newValue) => {
   const timeoutId = setTimeout(() => {
@@ -36,26 +39,35 @@ const matchesSearch = (campaign: Campaign, searchTerm: string) => {
 const filteredCampaigns = computed(() => campaignStore.campaigns
   .filter((campaign) => matchesSearch(campaign, debouncedSearch.value)));
 
-const items = [
+const handleEdit = (campaign: Campaign) => {
+  selectedCampaign.value = campaign;
+  isDialogVisible.value = true;
+};
+
+const handleDelete = (campaign: Campaign) => {
+  campaignStore.deleteCampaign(campaign.id);
+  toast.add({
+    severity: 'success',
+    summary: 'Success',
+    detail: 'Campaign deleted successfully',
+    life: 3000,
+  });
+};
+
+const items = (campaign: Campaign) => [
   {
     label: 'Edit',
-    command: () => {
-      // toast.add({ severity: 'success', summary: 'Updated', detail: 'Data Updated', life: 3000 });
-      console.log('edit');
-    },
+    command: () => handleEdit(campaign),
   },
   {
     label: 'Delete',
-    command: () => {
-      // toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 });
-      console.log('delete');
-    },
+    command: () => handleDelete(campaign),
   },
 ];
 
 const onManageClick = () => {
-  // toast.add({ severity: 'success', summary: 'Success', detail: 'Data Saved', life: 3000 });
-  console.log('click');
+  selectedCampaign.value = null;
+  isDialogVisible.value = true;
 };
 </script>
 
@@ -65,9 +77,12 @@ const onManageClick = () => {
       <div class="create">
         <Button
           label="Create Campaign"
-          @click="isDialogVisible = true"
+          @click="onManageClick"
         />
-        <CampaignAction v-model:visible="isDialogVisible" />
+        <CampaignAction
+          v-model:visible="isDialogVisible"
+          :campaign="selectedCampaign"
+        />
       </div>
       <div class="header">
         <span class="header__title">Campaigns</span>
@@ -119,7 +134,7 @@ const onManageClick = () => {
                     </div>
                     <div>
                       <SplitButton
-                        :model="items"
+                        :model="items(item)"
                         label="Manage"
                         severity="warn"
                         @save="onManageClick"

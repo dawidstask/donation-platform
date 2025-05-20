@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
 import Dialog from 'primevue/dialog';
+import type { Campaign } from '@/mocks/campaigns';
 import CampaignForm from './CampaignForm.vue';
 
 defineProps<{
   visible: boolean;
+  campaign?: Campaign | null;
 }>();
 
 const emit = defineEmits<{
@@ -18,11 +20,14 @@ const emit = defineEmits<{
       :visible="visible"
       @update:visible="(value) => emit('update:visible', value)"
       modal
-      header="Create New Campaign"
+      :header="campaign ? 'Edit Campaign' : 'Create Campaign'"
       :style="{ width: '50vw' }"
       :breakpoints="{ '960px': '75vw', '641px': '100vw' }"
     >
-      <CampaignForm @submit="emit('update:visible', false)" />
+      <CampaignForm
+        :initial-values="campaign"
+        @submit="emit('update:visible', false)"
+      />
     </Dialog>
   </div>
 </template>

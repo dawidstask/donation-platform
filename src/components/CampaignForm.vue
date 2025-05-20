@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, defineProps, defineEmits } from 'vue';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
@@ -10,6 +10,15 @@ import Button from 'primevue/button';
 import Message from 'primevue/message';
 import { useToast } from 'primevue/usetoast';
 import { useCampaignStore } from '@/stores/useCampaignStore';
+import type { Campaign } from '@/mocks/campaigns';
+
+const props = defineProps<{
+  initialValues?: Campaign | null;
+}>();
+
+const emit = defineEmits<{
+  submit: [];
+}>();
 
 const campaignStore = useCampaignStore();
 const toast = useToast();
@@ -26,9 +35,10 @@ const {
   handleSubmit,
   errors,
   defineField,
+  resetForm,
 } = useForm({
   validationSchema: schema,
-  initialValues: {
+  initialValues: props.initialValues || {
     title: '',
     description: '',
     category: '',
@@ -41,35 +51,36 @@ const [title, titleAttrs] = defineField('title');
 const [description, descriptionAttrs] = defineField('description');
 const [category, categoryAttrs] = defineField('category');
 const [image, imageAttrs] = defineField('image');
-const [amount, {}] = defineField('amount');
 
 const loading = ref(false);
-const resetForm = () => {
-  title.value = '';
-  description.value = '';
-  category.value = '';
-  image.value = '';
-  amount.value = 0;
-};
 
 const onSubmit = handleSubmit(async (values) => {
   loading.value = true;
   try {
-    campaignStore.addCampaign({
-      ...values,
-    });
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: 'Campaign created successfully',
-      life: 3000,
-    });
+    if (props.initialValues) {
+      campaignStore.updateCampaign(props.initialValues.id, values);
+      toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Campaign updated successfully',
+        life: 3000,
+      });
+    } else {
+      campaignStore.addCampaign(values);
+      toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Campaign created successfully',
+        life: 3000,
+      });
+    }
     resetForm();
+    emit('submit');
   } catch (error) {
     toast.add({
       severity: 'error',
       summary: 'Error',
-      detail: 'Failed to create campaign',
+      detail: props.initialValues ? 'Failed to update campaign' : 'Failed to create campaign',
       life: 3000,
     });
   } finally {
@@ -165,7 +176,7 @@ const onSubmit = handleSubmit(async (values) => {
     <div class="campaign-form__actions">
       <Button
         type="submit"
-        label="Create Campaign"
+        :label="props.initialValues ? 'Update Campaign' : 'Create Campaign'"
         :loading="loading"
         class="campaign-form__submit"
       />
