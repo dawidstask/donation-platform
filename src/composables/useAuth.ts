@@ -11,7 +11,7 @@ export interface AuthResponse {
   message?: string;
 }
 
-export const authenticate = (credentials: LoginCredentials): AuthResponse => {
+export const useAuth = (credentials: LoginCredentials): AuthResponse => {
   const user = users.find(
     (u: User) => u.username === credentials.username && u.password === credentials.password,
   );
