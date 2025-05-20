@@ -137,7 +137,7 @@ const onManageClick = () => {
                         :model="items(item)"
                         label="Manage"
                         severity="warn"
-                        @save="onManageClick"
+                        @click="handleEdit(item)"
                       />
                     </div>
                   </div>
