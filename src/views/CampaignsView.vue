@@ -8,12 +8,14 @@ import { ref, computed, watch } from 'vue';
 import { useCampaignStore } from '@/stores/useCampaignStore';
 import type { Campaign } from '@/mocks/campaigns';
 import { useCampaign } from '@/composables/useCampaign';
+import CampaignAction from '@/components/CampaignAction.vue';
 
 const campaignStore = useCampaignStore();
 const { donate, getDonation, setDonation } = useCampaign();
 
 const search = ref<string>('');
 const debouncedSearch = ref<string>('');
+const isDialogVisible = ref(false);
 
 watch(search, (newValue) => {
   const timeoutId = setTimeout(() => {
@@ -37,6 +39,13 @@ const filteredCampaigns = computed(() => campaignStore.campaigns
 <template>
   <Card>
     <template #title>
+      <div class="create">
+        <Button
+          label="Create Campaign"
+          @click="isDialogVisible = true"
+        />
+        <CampaignAction v-model:visible="isDialogVisible" />
+      </div>
       <div class="header">
         <span class="header__title">Campaigns</span>
         <InputText v-model="search" placeholder="Search campaigns..." />
@@ -78,7 +87,6 @@ const filteredCampaigns = computed(() => campaignStore.campaigns
                         />
                       </div>
                       <Button
-                        icon="pi pi-shopping-cart"
                         label="Donate"
                         class="campaigns__buy-button"
                         @click="donate(item, getDonation(item.id))"
@@ -96,6 +104,12 @@ const filteredCampaigns = computed(() => campaignStore.campaigns
 </template>
 
 <style scoped lang="scss">
+.create {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  margin-bottom: 1rem;
+}
 .header {
   display: flex;
   flex-direction: column;
@@ -181,6 +195,12 @@ const filteredCampaigns = computed(() => campaignStore.campaigns
     margin-top: 0.5rem;
   }
 
+  &__description {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-top: 0.5rem;
+  }
+
   &__actions {
     display: flex;
     flex-direction: column;
@@ -211,7 +231,7 @@ const filteredCampaigns = computed(() => campaignStore.campaigns
     }
   }
 
-  &__input .p-inputnumber{
+  &__input .p-inputnumber {
     width: 100%;
   }
 
