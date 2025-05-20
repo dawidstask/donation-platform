@@ -4,6 +4,7 @@ import Button from 'primevue/button';
 import Card from 'primevue/card';
 import InputNumber from 'primevue/inputnumber';
 import InputText from 'primevue/inputtext';
+import SplitButton from 'primevue/splitbutton';
 import { ref, computed, watch } from 'vue';
 import { useCampaignStore } from '@/stores/useCampaignStore';
 import type { Campaign } from '@/mocks/campaigns';
@@ -34,6 +35,28 @@ const matchesSearch = (campaign: Campaign, searchTerm: string) => {
 
 const filteredCampaigns = computed(() => campaignStore.campaigns
   .filter((campaign) => matchesSearch(campaign, debouncedSearch.value)));
+
+const items = [
+  {
+    label: 'Edit',
+    command: () => {
+      // toast.add({ severity: 'success', summary: 'Updated', detail: 'Data Updated', life: 3000 });
+      console.log('edit');
+    },
+  },
+  {
+    label: 'Delete',
+    command: () => {
+      // toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 });
+      console.log('delete');
+    },
+  },
+];
+
+const onManageClick = () => {
+  // toast.add({ severity: 'success', summary: 'Success', detail: 'Data Saved', life: 3000 });
+  console.log('click');
+};
 </script>
 
 <template>
@@ -71,25 +94,35 @@ const filteredCampaigns = computed(() => campaignStore.campaigns
                     </div>
                   </div>
                   <div class="campaigns__actions">
-                    <span class="campaigns__amount">${{ item.amount }}</span>
-                    <div class="campaigns__buttons">
-                      <div class="campaigns__input">
-                        <InputNumber
-                          :modelValue="getDonation(item.id)"
-                          @update:modelValue="(value) => setDonation(item.id, value)"
-                          inputId="minmax-buttons"
-                          showButtons
-                          :min="0"
-                          :max="10000"
-                          mode="currency"
-                          currency="USD"
-                          locale="en-US"
+                    <div>
+                      <span class="campaigns__amount">${{ item.amount }}</span>
+                      <div class="campaigns__buttons">
+                        <div class="campaigns__input">
+                          <InputNumber
+                            :modelValue="getDonation(item.id)"
+                            @update:modelValue="(value) => setDonation(item.id, value)"
+                            inputId="minmax-buttons"
+                            showButtons
+                            :min="0"
+                            :max="10000"
+                            mode="currency"
+                            currency="USD"
+                            locale="en-US"
+                          />
+                        </div>
+                        <Button
+                          label="Donate"
+                          class="campaigns__buy-button"
+                          @click="donate(item, getDonation(item.id))"
                         />
                       </div>
-                      <Button
-                        label="Donate"
-                        class="campaigns__buy-button"
-                        @click="donate(item, getDonation(item.id))"
+                    </div>
+                    <div>
+                      <SplitButton
+                        :model="items"
+                        label="Manage"
+                        severity="warn"
+                        @save="onManageClick"
                       />
                     </div>
                   </div>
@@ -167,7 +200,7 @@ const filteredCampaigns = computed(() => campaignStore.campaigns
     @media (min-width: 768px) {
       padding: 0 0 0 1rem;
       flex-direction: row;
-      align-items: start;
+      align-items: center;
     }
   }
 
@@ -208,6 +241,7 @@ const filteredCampaigns = computed(() => campaignStore.campaigns
 
     @media (min-width: 768px) {
       align-items: flex-end;
+      flex-direction: row;
     }
   }
 
