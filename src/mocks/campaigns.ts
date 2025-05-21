@@ -1,5 +1,5 @@
 export interface Campaign {
-  id: number;
+  id: string;
   title: string;
   description: string;
   category: string;
@@ -9,7 +9,7 @@ export interface Campaign {
 
 export const campaigns: Campaign[] = [
   {
-    id: 1,
+    id: '1',
     title: 'Clean Water Project',
     description: 'Help bring clean water to villages.',
     category: 'water',
@@ -17,7 +17,7 @@ export const campaigns: Campaign[] = [
     amount: 1000,
   },
   {
-    id: 2,
+    id: '2',
     title: 'Tree Planting',
     description: 'Support reforestation efforts worldwide.',
     category: 'environment',
@@ -25,7 +25,7 @@ export const campaigns: Campaign[] = [
     amount: 50,
   },
   {
-    id: 3,
+    id: '3',
     title: 'Education for Children',
     description: 'Support education programs for underprivileged children.',
     category: 'education',
@@ -33,7 +33,7 @@ export const campaigns: Campaign[] = [
     amount: 250,
   },
   {
-    id: 4,
+    id: '4',
     title: 'Food for Families',
     description: 'Provide meals for families in need.',
     category: 'food',
@@ -41,7 +41,7 @@ export const campaigns: Campaign[] = [
     amount: 100,
   },
   {
-    id: 5,
+    id: '5',
     title: 'Healthcare Access',
     description: 'Support medical services in underserved communities.',
     category: 'health',
@@ -49,7 +49,7 @@ export const campaigns: Campaign[] = [
     amount: 500,
   },
   {
-    id: 6,
+    id: '6',
     title: 'Disaster Relief',
     description: 'Provide emergency aid to disaster-affected areas.',
     category: 'emergency',

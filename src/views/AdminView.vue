@@ -81,7 +81,7 @@ const setChartOptions = () => {
       },
       tooltip: {
         callbacks: {
-          label: (context: any) => `Amount: $${context.raw}`,
+          label: (context) => `Amount: $${context.raw}`,
         },
       },
     },

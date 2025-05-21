@@ -1,57 +1,80 @@
 <script setup lang="ts">
-import DataView from 'primevue/dataview';
-import Button from 'primevue/button';
-import Card from 'primevue/card';
-import InputNumber from 'primevue/inputnumber';
-import InputText from 'primevue/inputtext';
-import SplitButton from 'primevue/splitbutton';
-import { ref, computed, watch } from 'vue';
+import {
+  ref,
+  computed,
+  watch,
+  onMounted,
+} from 'vue';
 import { useCampaignStore } from '@/stores/useCampaignStore';
-import type { Campaign } from '@/mocks/campaigns';
 import { useCampaign } from '@/composables/useCampaign';
-import CampaignAction from '@/components/CampaignAction.vue';
 import { useToast } from 'primevue/usetoast';
+import type { Campaign } from '@/mocks/campaigns';
+import InputText from 'primevue/inputtext';
+import InputNumber from 'primevue/inputnumber';
+import SplitButton from 'primevue/splitbutton';
+import Button from 'primevue/button';
+import DataView from 'primevue/dataview';
+import Card from 'primevue/card';
+import CampaignAction from '@/components/CampaignAction.vue';
 
 const campaignStore = useCampaignStore();
 const { donate, getDonation, setDonation } = useCampaign();
 const toast = useToast();
+const dialog = ref(false);
+const selectedCampaign = ref<Campaign | null>(null);
+
+onMounted(async () => {
+  await campaignStore.fetchCampaigns();
+  await campaignStore.fetchCategories();
+});
 
 const search = ref<string>('');
 const debouncedSearch = ref<string>('');
-const isDialogVisible = ref(false);
-const selectedCampaign = ref<Campaign | null>(null);
 
 watch(search, (newValue) => {
   const timeoutId = setTimeout(() => {
     debouncedSearch.value = newValue;
-  }, 500);
+  }, 300);
 
   return () => clearTimeout(timeoutId);
 });
 
-const matchesSearch = (campaign: Campaign, searchTerm: string) => {
-  const searchLower = searchTerm.toLowerCase();
-  return campaign.title.toLowerCase().includes(searchLower)
-    || campaign.description.toLowerCase().includes(searchLower)
-    || campaignStore.getCategoryById(campaign.category)?.toLowerCase().includes(searchLower);
-};
+const filteredCampaigns = computed(() => {
+  if (!debouncedSearch.value) return campaignStore.campaigns;
 
-const filteredCampaigns = computed(() => campaignStore.campaigns
-  .filter((campaign) => matchesSearch(campaign, debouncedSearch.value)));
+  const searchLower = debouncedSearch.value.toLowerCase();
+  return campaignStore.campaigns.filter((campaign) => {
+    const titleMatch = campaign.title.toLowerCase().includes(searchLower);
+    const descMatch = campaign.description.toLowerCase().includes(searchLower);
+    const categoryMatch = campaignStore.getCategoryLabel(campaign.category!)
+      .toLowerCase()
+      .includes(searchLower);
+    return titleMatch || descMatch || categoryMatch;
+  });
+});
 
 const handleEdit = (campaign: Campaign) => {
   selectedCampaign.value = campaign;
-  isDialogVisible.value = true;
+  dialog.value = true;
 };
 
-const handleDelete = (campaign: Campaign) => {
-  campaignStore.deleteCampaign(campaign.id);
-  toast.add({
-    severity: 'success',
-    summary: 'Success',
-    detail: 'Campaign deleted successfully',
-    life: 3000,
-  });
+const handleDelete = async (campaign: Campaign) => {
+  try {
+    await campaignStore.deleteCampaign(campaign.id);
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Campaign deleted successfully',
+      life: 3000,
+    });
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to delete campaign',
+      life: 3000,
+    });
+  }
 };
 
 const items = (campaign: Campaign) => [
@@ -67,7 +90,7 @@ const items = (campaign: Campaign) => [
 
 const onManageClick = () => {
   selectedCampaign.value = null;
-  isDialogVisible.value = true;
+  dialog.value = true;
 };
 </script>
 
@@ -80,7 +103,7 @@ const onManageClick = () => {
           @click="onManageClick"
         />
         <CampaignAction
-          v-model:visible="isDialogVisible"
+          v-model:visible="dialog"
           :campaign="selectedCampaign"
         />
       </div>
@@ -102,7 +125,7 @@ const onManageClick = () => {
                   <div class="campaigns__details">
                     <div>
                       <span class="campaigns__category">
-                        {{ campaignStore.getCategoryById(item.category) }}
+                         {{ campaignStore.getCategoryLabel(item.category) }}
                       </span>
                       <div class="campaigns__title">{{ item.title }}</div>
                       <div class="campaigns__description">{{ item.description }}</div>

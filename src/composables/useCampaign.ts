@@ -6,11 +6,11 @@ import { useCampaignStore } from '@/stores/useCampaignStore';
 export const useCampaign = () => {
   const toast = useToast();
   const campaignStore = useCampaignStore();
-  const donations = ref<Map<number, number | null>>(
+  const donations = ref<Map<string, number | null>>(
     new Map(),
   );
-  const getDonation = (campaignId: number) => donations.value.get(campaignId) ?? null;
-  const setDonation = (campaignId: number, value: number | null) => donations.value
+  const getDonation = (campaignId: string) => donations.value.get(campaignId) ?? null;
+  const setDonation = (campaignId: string, value: number | null) => donations.value
     .set(campaignId, value);
   const donate = (campaign: Campaign, amount: number | null) => {
     if (!amount || amount <= 0) {

@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from 'vue';
+import {
+  ref,
+  defineProps,
+  defineEmits,
+  watch,
+} from 'vue';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
@@ -8,6 +13,7 @@ import Textarea from 'primevue/textarea';
 import Select from 'primevue/select';
 import Button from 'primevue/button';
 import Message from 'primevue/message';
+import InputNumber from 'primevue/inputnumber';
 import { useToast } from 'primevue/usetoast';
 import { useCampaignStore } from '@/stores/useCampaignStore';
 import type { Campaign } from '@/mocks/campaigns';
@@ -36,6 +42,7 @@ const {
   errors,
   defineField,
   resetForm,
+  setValues,
 } = useForm({
   validationSchema: schema,
   initialValues: props.initialValues || {
@@ -51,14 +58,26 @@ const [title, titleAttrs] = defineField('title');
 const [description, descriptionAttrs] = defineField('description');
 const [category, categoryAttrs] = defineField('category');
 const [image, imageAttrs] = defineField('image');
+const [amount, amountAttrs] = defineField('amount');
 
 const loading = ref(false);
+
+watch(() => props.initialValues, (newValues) => {
+  if (newValues) {
+    setValues(newValues);
+  } else {
+    resetForm();
+  }
+}, { immediate: true });
 
 const onSubmit = handleSubmit(async (values) => {
   loading.value = true;
   try {
     if (props.initialValues) {
-      campaignStore.updateCampaign(props.initialValues.id, values);
+      await campaignStore.updateCampaign(props.initialValues.id, {
+        ...values,
+        amount: Number(values.amount),
+      });
       toast.add({
         severity: 'success',
         summary: 'Success',
@@ -66,7 +85,10 @@ const onSubmit = handleSubmit(async (values) => {
         life: 3000,
       });
     } else {
-      campaignStore.addCampaign(values);
+      await campaignStore.createCampaign({
+        ...values,
+        amount: Number(values.amount),
+      });
       toast.add({
         severity: 'success',
         summary: 'Success',
@@ -170,6 +192,31 @@ const onSubmit = handleSubmit(async (values) => {
         variant="simple"
       >
         {{ errors.image }}
+      </Message>
+    </div>
+
+    <div class="campaign-form__field">
+      <label for="amount" class="campaign-form__label">Amount</label>
+      <InputNumber
+        id="amount"
+        v-model="amount"
+        v-bind="amountAttrs"
+        :class="{ 'p-invalid': errors.amount }"
+        class="campaign-form__input"
+        showButtons
+        :min="0"
+        :max="10000"
+        mode="currency"
+        currency="USD"
+        locale="en-US"
+      />
+      <Message
+        v-if="errors.amount"
+        severity="error"
+        size="small"
+        variant="simple"
+      >
+        {{ errors.amount }}
       </Message>
     </div>
 
