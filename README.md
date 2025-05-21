@@ -37,7 +37,7 @@ The goal is to support corporate social responsibility (CSR) initiatives and fos
 This is a **non-production demo application** created for demonstration purposes only. It includes basic functionality but **omits** certain production-level features, such as:
 
 - ❌ Loading indicators during API calls
-- ❌ Authentication and role-based permissions
+- ❌ Authentication and advanced role-based permissions
 - ❌ Automated testing and CI/CD
 - ❌ Robust error handling
 - ❌ **Backend-driven search and pagination**
